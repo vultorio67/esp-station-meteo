@@ -40,7 +40,7 @@ void setup () {
   HTTPClient http;
 
     http.useHTTP10(true);
-  http.begin("http://192.168.1.60:8080/json.htm?username=ZXZhbg===&password=ZXZubzE1MjAyMDA1=&type=devices&rid=11");
+  http.begin("http://192.168.1.60:8080/json.htm?username=<user>=&password=<password>=&type=devices&rid=11");
   http.GET();
 
   // Parse response
@@ -73,20 +73,20 @@ void setup () {
   if (! bme.begin(0x76))
   {
     Serial.println("Dindn't find bme.");
-    http.begin("http://192.168.1.60:8080/json.htm?username=ZXZhbg===&password=ZXZubzE1MjAyMDA1=&type=command&param=addlogmessage&message=::::::::::::::::::::Dindn't find bme.&level=1");
+    http.begin("http://192.168.1.60:8080/json.htm?username=<user>=&password=<password>=&type=command&param=addlogmessage&message=::::::::::::::::::::Dindn't find bme.&level=1");
     findBme = false;
   }
   else
   {
     Serial.println("find Bme");
     findBme = true;
-    http.begin("http://192.168.1.60:8080/json.htm?username=ZXZhbg===&password=ZXZubzE1MjAyMDA1=&type=command&param=addlogmessage&message=::::::::::::::::::::find bme.&level=1");
+    http.begin("http://192.168.1.60:8080/json.htm?username=<user>=&password=<password>=&type=command&param=addlogmessage&message=::::::::::::::::::::find bme.&level=1");
   }
 
     //check si le capteur uv est co
     if (! uv.begin()) {
     Serial.println("Didn't find Si1145");
-    http.begin("http://192.168.1.60:8080/json.htm?username=ZXZhbg===&password=ZXZubzE1MjAyMDA1=&type=command&param=addlogmessage&message=::::::::::::::::::::Dindn't find SI1145&level=1");
+    http.begin("http://192.168.1.60:8080/json.htm?username=<user>=&password=<password>=&type=command&param=addlogmessage&message=::::::::::::::::::::Dindn't find SI1145&level=1");
       Serial.println(WiFi.localIP());
 
     findGY1145 = false;
@@ -94,7 +94,7 @@ void setup () {
   else
   {
     Serial.println("find Si1145");
-    http.begin("http://192.168.1.60:8080/json.htm?username=ZXZhbg===&password=ZXZubzE1MjAyMDA1=&type=command&param=addlogmessage&message=::::::::::::::::::::find SI1145.&level=1");
+    http.begin("http://192.168.1.60:8080/json.htm?username=<user>=&password=<password>=&type=command&param=addlogmessage&message=::::::::::::::::::::find SI1145.&level=1");
     findGY1145 = true;
   }
  
@@ -116,7 +116,7 @@ void loop() {
     
       HTTPClient http;
     
-      String a = "http://192.168.1.60:8080/json.htm?username=ZXZhbg===&password=ZXZubzE1MjAyMDA1=&type=command&param=udevice&idx=9&nvalue=0&svalue=";
+      String a = "http://192.168.1.60:8080/json.htm?username=<user>=&password=<password>=&type=command&param=udevice&idx=9&nvalue=0&svalue=";
       String b = ";";
       String c = ";HUM_STAT;";
       String d = ";";
@@ -169,7 +169,7 @@ void WifiConnexion()
   HTTPClient http;
 
   Serial.println(WiFi.localIP());
-  http.begin("http://192.168.1.60:8080/json.htm?username=ZXZhbg===&password=ZXZubzE1MjAyMDA1=&type=command&param=addlogmessage&message=the esp of météo station is connect to the network&level=1");
+  http.begin("http://192.168.1.60:8080/json.htm?username=<user>=&password=<password>=&type=command&param=addlogmessage&message=the esp of météo station is connect to the network&level=1");
 }
 
 
@@ -189,14 +189,14 @@ void getRain(){
   {
 
     Serial.println("le capteur a bougé");
-    http.begin("http://192.168.1.60:8080/json.htm?username=ZXZhbg===&password=ZXZubzE1MjAyMDA1=&type=command&param=addlogmessage&message=the rain counter have move&level=1");
+    http.begin("http://192.168.1.60:8080/json.htm?username=<user>=&password=<password>=&type=command&param=addlogmessage&message=the rain counter have move&level=1");
     rainCounter = rainCounter + 1;
     Serial.println(rainCounter);
     rains = rains+0.28;
     Serial.println(rains);
 
     //http://192.168.1.60:8080/json.htm?type=command&param=udevice&idx=11&nvalue=0&svalue=111;18
-    String z = "http://192.168.1.60:8080/json.htm?username=ZXZhbg===&password=ZXZubzE1MjAyMDA1=&type=command&param=udevice&idx=11&nvalue=0&svalue=0;";
+    String z = "http://192.168.1.60:8080/json.htm?username=<user>=&password=<password>=&type=command&param=udevice&idx=11&nvalue=0&svalue=0;";
     
 
       http.begin(z+rains);
@@ -237,7 +237,7 @@ void getUv()
   float UVindex = uv.readUV();
   UVindex /= 100.0;  
   Serial.print("UV: ");  Serial.println(UVindex);
-  String e = "http://192.168.1.60:8080/json.htm?username=ZXZhbg===&password=ZXZubzE1MjAyMDA1=&type=command&param=udevice&idx=10&nvalue=0&svalue=";
+  String e = "http://192.168.1.60:8080/json.htm?username=<user>=&password=<password>=&type=command&param=udevice&idx=10&nvalue=0&svalue=";
   String f = ";TEMP";
 
   if (WiFi.status() == WL_CONNECTED) { //Check WiFi connection status

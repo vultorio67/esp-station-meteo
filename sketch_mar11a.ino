@@ -18,8 +18,8 @@ int interval=3000;
 // Tracks the time since last event fired
 unsigned long previousMillis=0;
  
-const char* ssid = "Livebox-B9E6";
-const char* password = "WMvhfodCQpZ7Gbfywx";
+const char* ssid = "SSID";
+const char* password = "box password";
 
 float rains;
 

@@ -20,6 +20,7 @@ float temperature, humidity, pressure, altitude;
 #define SEALEVELPRESSURE_HPA (1013.25) 
 
 int interval=2000;
+int intervalReastart=108000000;
 // Tracks the time since last event fired
 unsigned long previousMillis=0;
  
@@ -28,7 +29,7 @@ const char* password = "Evno1520";
 
 float rains;
 
-
+WiFiClient wifiClient;
 
 boolean findGY1145;
 boolean findBme;
@@ -45,7 +46,7 @@ void setup () {
   HTTPClient http;
 
   http.useHTTP10(true);
-  http.begin("http://192.168.1.60:8080/json.htm?username=ZXZhbg===&password=ZXZubzE1MjAyMDA1=&type=devices&rid=11");
+  http.begin(wifiClient, "http://192.168.1.60:8080/json.htm?username=ZXZhbg===&password=ZXZubzE1MjAyMDA1=&type=devices&rid=11");
   http.GET();
 
   // Parse response
@@ -78,20 +79,20 @@ void setup () {
   if (! bme.begin(0x76))
   {
     Serial.println("Dindn't find bme.");
-    http.begin("http://192.168.1.60:8080/json.htm?username=ZXZhbg===&password=ZXZubzE1MjAyMDA1=&type=command&param=addlogmessage&message=::::::::::::::::::::Dindn't find bme.&level=1");
+    http.begin(wifiClient, "http://192.168.1.60:8080/json.htm?username=ZXZhbg===&password=ZXZubzE1MjAyMDA1=&type=command&param=addlogmessage&message=::::::::::::::::::::Dindn't find bme.&level=1");
     findBme = false;
   }
   else
   {
     Serial.println("find Bme");
     findBme = true;
-    http.begin("http://192.168.1.60:8080/json.htm?username=ZXZhbg===&password=ZXZubzE1MjAyMDA1=&type=command&param=addlogmessage&message=::::::::::::::::::::find bme.&level=1");
+    http.begin(wifiClient, "http://192.168.1.60:8080/json.htm?username=ZXZhbg===&password=ZXZubzE1MjAyMDA1=&type=command&param=addlogmessage&message=::::::::::::::::::::find bme.&level=1");
   }
 
     //check si le capteur uv est co
     if (! uv.begin()) {
     Serial.println("Didn't find Si1145");
-    http.begin("http://192.168.1.60:8080/json.htm?username=ZXZhbg===&password=ZXZubzE1MjAyMDA1=&type=command&param=addlogmessage&message=::::::::::::::::::::Dindn't find SI1145&level=1");
+    http.begin(wifiClient, "http://192.168.1.60:8080/json.htm?username=ZXZhbg===&password=ZXZubzE1MjAyMDA1=&type=command&param=addlogmessage&message=::::::::::::::::::::Dindn't find SI1145&level=1");
       Serial.println(WiFi.localIP());
 
     findGY1145 = false;
@@ -99,7 +100,7 @@ void setup () {
   else
   {
     Serial.println("find Si1145");
-    http.begin("http://192.168.1.60:8080/json.htm?username=ZXZhbg===&password=ZXZubzE1MjAyMDA1=&type=command&param=addlogmessage&message=::::::::::::::::::::find SI1145.&level=1");
+    http.begin(wifiClient, "http://192.168.1.60:8080/json.htm?username=ZXZhbg===&password=ZXZubzE1MjAyMDA1=&type=command&param=addlogmessage&message=::::::::::::::::::::find SI1145.&level=1");
     findGY1145 = true;
   }
  
@@ -131,7 +132,7 @@ void loop() {
       String d = ";";
     
     
-      http.begin(a+temperature+b+humidity+c+pressure+d+pressure); 
+      http.begin(wifiClient, a+temperature+b+humidity+c+pressure+d+pressure); 
       Serial.println(a+temperature+b+humidity+c+pressure+d+pressure);//Specify request destination
       int httpCode2 = http.GET();                                  //Send the request
     
@@ -152,6 +153,14 @@ void loop() {
         {
           getUv();
         }
+      
+      previousMillis = currentMillis;
+   }   
+
+    if ((unsigned long)(currentMillis - previousMillis) >= intervalReastart) {
+
+          Serial.println("The Esp is restarting.");
+          ESP.restart();
       
       previousMillis = currentMillis;
    }   
@@ -178,7 +187,7 @@ void WifiConnexion()
   HTTPClient http;
 
   Serial.println(WiFi.localIP());
-  http.begin("http://192.168.1.60:8080/json.htm?username=ZXZhbg===&password=ZXZubzE1MjAyMDA1=&type=command&param=addlogmessage&message=the esp of météo station is connect to the network&level=1");
+  http.begin(wifiClient, "http://192.168.1.60:8080/json.htm?username=ZXZhbg===&password=ZXZubzE1MjAyMDA1=&type=command&param=addlogmessage&message=the esp of météo station is connect to the network&level=1");
 }
 
 
@@ -198,7 +207,7 @@ void getRain(){
   {
 
     Serial.println("le capteur a bougé");
-    http.begin("http://192.168.1.60:8080/json.htm?username=ZXZhbg===&password=ZXZubzE1MjAyMDA1=&type=command&param=addlogmessage&message=the rain counter have move&level=1");
+    http.begin(wifiClient, "http://192.168.1.60:8080/json.htm?username=ZXZhbg===&password=ZXZubzE1MjAyMDA1=&type=command&param=addlogmessage&message=the rain counter have move&level=1");
     rainCounter = rainCounter + 1;
     Serial.println(rainCounter);
     rains = rains+0.28;
@@ -208,7 +217,7 @@ void getRain(){
     String z = "http://192.168.1.60:8080/json.htm?username=ZXZhbg===&password=ZXZubzE1MjAyMDA1=&type=command&param=udevice&idx=11&nvalue=0&svalue=0;";
     
 
-      http.begin(z+rains);
+      http.begin(wifiClient, z+rains);
       Serial.println(z+rains); 
       //Serial.println(a+temperature+b+humidity+c+pressure+d+pressure);//Specify request destination
       int httpCode3 = http.GET();                                  //Send the request
@@ -256,7 +265,7 @@ void getUv()
   
       ///json.htm?type=command&param=udevice&idx=3&nvalue=0&svalue=450;100;hot
   
-      http.begin(e+UVindex+f);
+      http.begin(wifiClient, e+UVindex+f);
       Serial.println(e+UVindex+f);
       int httpCode = http.GET();                                  //Send the request
   
@@ -286,7 +295,7 @@ void getSoil()
   String com = "http://192.168.1.60:8080/json.htm?username=ZXZhbg===&password=ZXZubzE1MjAyMDA1=&type=command&param=udevice&idx=12&nvalue=";
   float Cb = moisture;
 
-  http.begin(com+Cb); 
+  http.begin(wifiClient, com+Cb); 
   Serial.println(com+Cb);
 
     int httpCode3 = http.GET();                                  //Send the request
@@ -313,7 +322,7 @@ void getSoil()
     String pump = "http://192.168.1.60:8080/json.htm?type=command&param=switchlight&idx=13&switchcmd=";
     String On = "On";
 
-    http.begin(pump+On); 
+    http.begin(wifiClient, pump+On); 
     Serial.println(pump+On);
 
       int httpCode3 = http.GET();                                  //Send the request
@@ -339,7 +348,7 @@ void getSoil()
     String pump = "http://192.168.1.60:8080/json.htm?type=command&param=switchlight&idx=13&switchcmd=";
     String On = "Off";
 
-    http.begin(pump+On); 
+    http.begin(wifiClient, pump+On); 
     Serial.println(pump+On);
 
       int httpCode3 = http.GET();                                  //Send the request
@@ -366,7 +375,7 @@ void activateWaterIrrigation()  //depuis domoticz
   HTTPClient http;
 
   http.useHTTP10(true);
-  http.begin("http://192.168.1.60:8080/json.htm?username=ZXZhbg===&password=ZXZubzE1MjAyMDA1=&type=devices&rid=13");
+  http.begin(wifiClient, "http://192.168.1.60:8080/json.htm?username=ZXZhbg===&password=ZXZubzE1MjAyMDA1=&type=devices&rid=13");
   http.GET();
 
   // Parse response
@@ -399,5 +408,6 @@ void activateWaterIrrigation()  //depuis domoticz
   
 
 }
+
 
 

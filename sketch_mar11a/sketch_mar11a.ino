@@ -31,7 +31,6 @@ int intervalReastart=3600000;
 unsigned long previousMillis=0;
  
 const char* ssid = "CVEN";
-const char* password = "Evno1520";
 
 float rains;
 
